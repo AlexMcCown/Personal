@@ -4,8 +4,8 @@
 #define D 18
 
 #define BIT_SIZE 32
-bool bit_arr_msbf[BIT_SIZE];
-bool bit_arr_lsbf[BIT_SIZE];
+bool bit_arr_msbf[BIT_SIZE] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }; //This can be more dynamically done with a for loop in setup()
+bool bit_arr_lsbf[BIT_SIZE] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
 unsigned int MSBFirstBoolToUint() {
     int bit_arr_size = sizeof(bit_arr_msbf);
