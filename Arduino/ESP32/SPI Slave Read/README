@@ -19,5 +19,5 @@ SPI can be implemented in a number of different ways, this is not a one size fit
 some questions i was asked:
 Why not implement the function in the interrupt? ... You can with some added fiddling and save a little bit of memory but i originally made the code to be easily modifiable, 
 maskable and manipulable
-Should i fill the array with zeros first? ... Yes probably, i should add that
+Should i fill the array with zeros first? ... Yes probably, i should add that EDIT: This has been crudely implemented
 How fast can i take this? ... My STM32F402CC implementation worked fine up to 1.2MHz and that's as high as i tested it
