@@ -1,0 +1,23 @@
+Someone asked me how i implemented the SPI read on a recent project i talked about elsewhere, i whipped this up as a result 
+
+the function MSBFirstBoolToUint() reads the global bool array bit_arr_msbf and outputs a uInt representing the value of the array converted with the most significant bit first(index 0)
+
+LSBFirstBoolToUint() reads bit_arr_lsbf and works the same but the the LSB first 
+
+everything below that was just freehand and is totally untested to show the basic implementation in an ESP32 as that's what the other person was asking for
+my implantation was for an STM32 microcontroller written in C++ and not for arduino so its not the same, but this should work similarly 
+
+Your chip select line is connected to a hardware interrupt and loops waiting for clock to go high and reads the state of the data pin in the array 
+
+Some things of note: 
+I'm not claiming this is the most efficient thing on earth or the best solution to this problem.
+This should work with any 32 bit micro, 8 bit micros such as the ATMEGA328P based arduinos only have a 16 bit wide uInt and will only work with BIT_SIZE set to 16 or lower 
+Values of BIT_SIZE below the size of a uInt should still work with both 
+This is a software based hardware interrupt driven bitbang, the core this runs on will be locked up until it finishes
+SPI can be implemented in a number of different ways, this is not a one size fits all solution and you should be ready to do some debugging with a logic analyzer 
+
+some questions i was asked:
+Why not implement the function in the interrupt? ... You can with some added fiddling and save a little bit of memory but i originally made the code to be easily modifiable, 
+maskable and manipulable
+Should i fill the array with zeros first? ... Yes probably, i should add that
+How fast can i take this? ... My STM32F402CC implementation worked fine up to 1.2MHz and that's as high as i tested it
