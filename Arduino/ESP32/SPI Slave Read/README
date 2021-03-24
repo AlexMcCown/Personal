@@ -15,6 +15,7 @@ This should work with any 32 bit micro, 8 bit micros such as the ATMEGA328P base
 Values of BIT_SIZE below the size of a uInt should still work with both 
 This is a software based hardware interrupt driven bitbang, the core this runs on will be locked up until it finishes
 SPI can be implemented in a number of different ways, this is not a one size fits all solution and you should be ready to do some debugging with a logic analyzer 
+You should probably utilize a timer based inturrupt or detect the rising edge of the CS line to break out of the loop just in case a bit gets missed 
 
 some questions i was asked:
 Why not implement the function in the interrupt? ... You can with some added fiddling and save a little bit of memory but i originally made the code to be easily modifiable, 
