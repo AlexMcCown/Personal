@@ -1,0 +1,41 @@
+Im starting to upload old designs that i never finished.
+This is an GPSDOCXO or GPS Disciplined Oven-Controlled crystal(X) Oscillator to be used as a 10MHz lab reference.
+The basic design is simple, a good oven-controlled crystal oscillator like the double oven used here is capable of drift and jitter down in the parts per billion but is not very accurate
+A GPS based time reference is extremely accurate but not at a usable frequency.
+GPSDOCXO's are designed to lock an OCXO to a timing GPS.
+
+My concept was a mix of a PLL (phase locked loop) and a FLL (frequency locked loop) with the basic concept working in 2 stages.
+Stage 1 is the FLL stage, we lock the OCXO to the 1 PPS (pulse per second) signal of the GPS, we start by counting the number of pulses the OCXO puts out between 2 rising edges of the GPS PPS.
+We adjust our OCXO using a look up table or formula to match the desired frequency and try again, once thats locked we increase our gate time to 10 pulses, and count.
+we continue this for as much as a 425 gates (or roughly 7 minutes) and adjust.
+Once we have reached lock we can slowly skew the OCXO until we are right on the edge of going one count over, this will keep our phases locked.
+As double oven OCXOs should never be turned off once burned in, this long startup time is fine.
+
+The hardware is fairly simple, we convert the sine wave from the OCXO to a square wave using a TLV3501 4.5-ns compactor, that is fed in to a PL123-05N clock distribution chip that
+claims 60fs of RMS jitter. The output of that is split in to 3 usable output ports (2 of them are 50 ohm buffered) with one going to a MAXII CPLD (Complex programmable logic device)
+that handles the counting and reports the count offset (no need to report the full count as it will be close enough) to an STM32F402CC based USB module, that module controls a 
+DACx0501 (i indend to use a DAC80501 here) that has a 5-ppm/˚C class voltage reference built in. 
+The GPS used is a Ublox LEA-5T-0-003 based timing GPS module thats avalable on ebay for under $20 removed from huawei 4G cell towers.
+These modules are very nice as they come with built in TVS suppressors, antenna power injection and over current detection.
+This whole design was designed to fit in to standard aluminum extrusion cases.
+
+There are plenty of issues with this design. First of all the CPLD code is rough and unfinished. The 2 layer PCB was a pipe-dream and is simply too few layers for this sort of design
+in this sort of size.
+The OCXO unit will need to be placed in a separate box as the unit it self can easily hit 50*C and bake everything inside.
+There is no on board primary power supply.
+There is a bottleneck somewhere in the design but without building it im not sure where it is. Obviously this is not 100% perfectly accurate and precise of a 10MHz time reference 
+something has to be the bottleneck.  If the bottleneck is the OCXO or the GPS we can reduce part cost. Either use cheaper clock distributors, a lower resolution DAC or using a
+single cheap FPGA to replace the microcontroller entirely. Normally i will create a design with the best chips i can than reduce part specifications until we approch our bottleneck.
+Having a GPS on board means that this design is ideal for not just being a GPSDOCXO but also an NTP server, using a microcontroller with ethernet like an LPC1768 might be a better
+solution.
+a single 5v line on the PCB is unconnected and a re-layout of the upper right section is required.
+The STM32F402CC board is not a standard blackpill and does not have an easy name to reference people to.
+The STM32F402CC is only used for its USB and Floating point unit.
+There is no font panel PCB but the intention was 5 buttons and an OLED display.
+
+I might come back to this design but with access to a high precision atomic frequency counter, simply using my OCXO as a routinely calabrated unit is good enough for my home use.
+
+The CPLD code is written in verilog, does not include a functional Shift-Out register and was the first time i have written anything in verilog. The only solution i could come up with
+for the problem of resetting a counter while continiously counting was to create 2 counters.  This should all fit in the smallest MAX II CPLD so i left it like that.
+There is an external GPIO interface intended for a distribution box, Internal header intended for an FTP server, The front RS232 is for standard NMEA output, configuration or the FTP
+depending on jumper configurations.
