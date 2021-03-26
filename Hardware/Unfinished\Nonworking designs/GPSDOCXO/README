@@ -39,3 +39,6 @@ The CPLD code is written in verilog, does not include a functional Shift-Out reg
 for the problem of resetting a counter while continiously counting was to create 2 counters.  This should all fit in the smallest MAX II CPLD so i left it like that.
 There is an external GPIO interface intended for a distribution box, Internal header intended for an FTP server, The front RS232 is for standard NMEA output, configuration or the FTP
 depending on jumper configurations.
+
+EDIT: There is no code for the STM32F402CC.  I started writing it in C++ than switched over to platformio/arduino and chose to stop until i had the actual hardware in hand.
+If i can find any of it i will upload both here.  The only thing i implemented were some test scripts to write to the CPLD and read, controlling the DAC and reading from the GPS.
