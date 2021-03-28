@@ -1,0 +1,104 @@
+Simple class for logging to file or to a list 
+
+I have used this for a few months now and i find it quite useful.
+
+Usage: 
+See the doxygen or the class for full usage 
+
+public Logging(export_level,log_file_name, include_data_and_time)
+
+When constructing, you are required to enter the log numbers as an int
+any added error below or this log number will be handled by the class
+you use this to set your logging level at run or compile time.
+
+you can also specify your log file name, this can also be used to set the location of your log.
+By default the log is "log.txt" in the same directory as the .exe, you dont need to specify this
+
+you can specify if you want to include a date and time in each line of the log with true or false
+
+with ToFile you must specify String, List<String>, String[] or Exception, after that you must 
+specify the level this is, if the level is higher than the level set during constructing
+it is simply ignored, this is useful for user defined logging levels.
+If the logging level is within the specified level, true is returned, false if otherwise.
+
+Similar to ToFile there is ToList, this simply outputs the log to a list.
+This is only useful sometimes as if your program crashes you loose your log.
+Part of this functionality you have GeLlist, ClearList() and SaveList, GetList returns the list.
+ClearList simply clears the list, SaveList saves the list at a specified location (default: log.txt in the root directory)
+
+This also has some benchmarking and timekeeping. 
+StartLogTimer() starts a timer inside the class.
+LogTimer_ms logs the timer in miliseconds to the log file with a specified message attached. You must send some string, "" is acceptable but
+not reccomended as a raw time offers no useful information
+LogTimer_ns logs the timer in nanoseconds to the log file in the same way as above.
+NOTE: Neither LogTimer_ms not LogTimer_ns will pause the timer when writing or stop/clear the timer, it will keep running.
+StopTimer() stops and clears the timer.
+Get_ms() returns a long of the current timer ms.
+Get_ns() returns a long of the current timer ns.
+If you want to do more with the timer, the timer is publically accessable with sw and has all the standard stopwatch functions.
+NOTE: you should stop the timer when you stop using it as it will just keep counting.
+
+Multiple instances of Logging can be created and used independently, if they are on the same thread they can write to the same
+log file, if not some locking will be nessary to prevent writing at the same time to the same file.
+
+No file closing is needed.
+
+--------Basic usage-------
+
+Logging log = new Logging(4);
+
+log.StartLogTimer();
+log.ToFile("Log test", 0);
+List<String> test = new List<string>();
+test.Add("Testing");
+test.Add("Testing 1");
+test.Add("Testing 2");
+test.Add("Testing 3");
+log.ToFile(test, 0);
+String[] testArr = { "Testing", "1", "2", "3" };
+log.ToFile(testArr, 0);
+log.ToFile("------MY_CLASS Begins------", 0);
+try
+{
+    Convert.ToInt32("Unconvertable");
+}
+catch (Exception ex)
+{
+    log.ToFile(ex, 0);
+}
+log.LogTimer_ms("MY_CLASS took", 0);
+log.LogTimer_ns("MY_CLASS took", 0);
+log.StopTimer();
+
+------------outputs the log file------------
+
+Logging started 3/28/2021 5:57:22 AM
+3/28/2021 5:57:22 AM: Log test
+3/28/2021 5:57:22 AM: 
+Testing
+Testing 1
+Testing 2
+Testing 3
+
+3/28/2021 5:57:22 AM: 
+Testing
+1
+2
+3
+
+3/28/2021 5:57:22 AM: ------MY_CLASS Begins------
+3/28/2021 5:57:22 AM: System.FormatException: Input string was not in a correct format.
+   at System.Number.ThrowOverflowOrFormatException(ParsingStatus status, TypeCode type)
+   at System.Number.ParseInt32(ReadOnlySpan`1 value, NumberStyles styles, NumberFormatInfo info)
+   at System.Convert.ToInt32(String value)
+   at PCDProcessor2.Form1..ctor() in XXXXXXXXXXX:line 34
+3/28/2021 5:57:22 AM: MY_CLASS took: 96 ms.
+3/28/2021 5:57:22 AM: MY_CLASS took: 101715000 ns.
+
+
+
+-----Things of note-----
+The class is not optimized, StringBuilder is not used as much as i would like and the file is often opened a couple of times or more in a single call
+there is no tabbing or formatting for lists or arrays
+The exception logging is the full Exception.ToString() and is designed for you, not for the enduser to fully understand
+
