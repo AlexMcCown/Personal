@@ -1,6 +1,14 @@
 # Simple rapidly made tool to make arb sized dot matrix representations of input images
 # Alex McCown 5/23/21
 
+# Created in about an hour to help a friend make textures for a 3D project, it functions simply, you provide it with 
+# information such as the input image, size of the resulting image in pixels, number of LEDs (dots) in one axis, 
+# how much to blur the dots and the spacing between the dots in pixels. 
+# it will produce an output PNG that looks similar to an LED matrix, 
+# full color and represents the input file. 
+# This code is unoptimized and was written in one sitting to do one task rapidly using libraries that i knew off the top of my head.
+# I might revisit this if there is interest.
+
 from PIL import ImageFilter, Image, ImageDraw
 import argparse
 
@@ -39,3 +47,5 @@ if __name__ == "__main__":
         parser.print_help()
         exit()
     FillCircles(args.Dots, args.Size, args.Spacing, args.Blur, args.Input, args.Output)
+
+    
